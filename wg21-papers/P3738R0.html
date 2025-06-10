@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2025-06-10" />
+  <meta name="dcterms.date" content="2025-06-11" />
   <title>Make `std::make_from_tuple` SFINAE friendly</title>
   <style>
       code{white-space: pre-wrap;}
@@ -432,7 +432,7 @@ SFINAE friendly</h1>
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2025-06-10</td>
+    <td>2025-06-11</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -468,22 +468,21 @@ to make it SFINAE friendly.</p>
 </blockquote>
 <p>When someone write SFINAE code like the following to check whether
 <code class="sourceCode cpp">T</code> can constructed from a tuple, they
-may hit hard errors like “no matching function for call to <code class="sourceCode cpp">make<span class="op">-</span>from<span class="op">-</span>tuple<span class="op">-</span>impl</code>”.</p>
+may hit hard errors like “no matching function for call to <code class="sourceCode cpp">make<span class="op">-</span>from<span class="op">-</span>tuple<span class="op">-</span>impl</code>”
+(<a href="https://godbolt.org/z/qs9aon1oM">Compiler Explorer</a>).</p>
 <blockquote>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> T, <span class="kw">class</span> Tuple, <span class="kw">class</span> <span class="op">=</span> <span class="dt">void</span><span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T, <span class="kw">typename</span> Tuple, <span class="kw">typename</span> <span class="op">=</span> <span class="dt">void</span><span class="op">&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> <span class="dt">bool</span> has_make_from_tuple <span class="op">=</span> <span class="kw">false</span>;</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">class</span> T, <span class="kw">class</span> Tuple<span class="op">&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> <span class="dt">bool</span> has_make_from_tuple<span class="op">&lt;</span>T, Tuple,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T, <span class="kw">typename</span> Tuple<span class="op">&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="kw">constexpr</span> <span class="dt">bool</span> has_make_from_tuple<span class="op">&lt;</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    T, Tuple,</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    std<span class="op">::</span>void_t<span class="op">&lt;</span><span class="kw">decltype</span><span class="op">(</span>std<span class="op">::</span>make_from_tuple<span class="op">&lt;</span>T<span class="op">&gt;(</span>std<span class="op">::</span>declval<span class="op">&lt;</span>Tuple<span class="op">&gt;()))&gt;&gt;</span> <span class="op">=</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">true</span>;</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A <span class="op">{</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> a;</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span><span class="op">(!</span>has_make_from_tuple<span class="op">&lt;</span><span class="dt">int</span> <span class="op">*</span>, std<span class="op">::</span>tuple<span class="op">&lt;</span>A <span class="op">*&gt;&gt;)</span>;</span></code></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> A <span class="op">{</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> a;</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">static_assert</span><span class="op">(!</span>has_make_from_tuple<span class="op">&lt;</span><span class="dt">int</span> <span class="op">*</span>, std<span class="op">::</span>tuple<span class="op">&lt;</span>A <span class="op">*&gt;&gt;)</span>;</span></code></pre></div>
 </blockquote>
 <p>Even If the effects are <em>Equivalent to</em> calling a constrained
 function, the constraints has not apply to <code class="sourceCode cpp">std<span class="op">::</span>make_from_tuple</code>.</p>
@@ -505,27 +504,22 @@ explicitly stated.</p>
 <a href="https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=73edc003c0a8f0badc7027e6deefd3a573300b03"><code class="sourceCode cpp">libstdc<span class="op">++</span></code></a>.</p>
 <h1 data-number="5" id="proposed-wording"><span class="header-section-number">5</span> Proposed Wording<a href="#proposed-wording" class="self-link"></a></h1>
 <blockquote>
-<p>Modify section 22.4.6 [tuple.apply] as indicated:</p>
+<p>Modify section 22.4.6 <span>22.4.6
+<a href="https://wg21.link/tuple.apply">[tuple.apply]</a></span> as
+indicated:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span> T, tuple<span class="op">-</span>like Tuple<span class="op">&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> <span class="kw">constexpr</span> T make_from_tuple<span class="op">(</span>Tuple<span class="op">&amp;&amp;</span> t<span class="op">)</span>;</span></code></pre></div>
-<div class="rm" style="color: #bf0303">
-<p><em>Mandates:</em> If <code class="sourceCode default">tuple_size_v&lt;remove_reference_t&lt;Tuple&gt;&gt;</code>
+<p><em>Mandates:</em> If <code class="sourceCode cpp">tuple_size_v<span class="op">&lt;</span>remove_reference_t<span class="op">&lt;</span>Tuple<span class="op">&gt;&gt;</span></code>
 is 1, then
-<code class="sourceCode default">reference_constructs_from_tem</code>-
-<code class="sourceCode default">porary_v&lt;T, decltype(get&lt;0&gt;(declval&lt;Tuple&gt;()))&gt;</code>
-is <code class="sourceCode default">false</code>.</p>
-</div>
+<code class="sourceCode cpp">reference_constructs_from_tem</code>- <code class="sourceCode cpp">porary_v<span class="op">&lt;</span>T, <span class="kw">decltype</span><span class="op">(</span>get<span class="op">&lt;</span><span class="dv">0</span><span class="op">&gt;(</span>declval<span class="op">&lt;</span>Tuple<span class="op">&gt;()))&gt;</span></code>
+is
+<code class="sourceCode cpp"><span class="kw">false</span></code>.</p>
 <div class="add" style="color: #006e28">
 <p>Let <code class="sourceCode default">I</code> be the pack <code class="sourceCode default">0, 1, ..., (tuple_size_v&lt;remove_reference_t&lt;Tuple&gt;&gt; - 1)</code>.</p>
 <p><em>Constraints:</em></p>
 <ul>
-<li><p><code class="sourceCode default">is_constructible_v&lt;T, decltype(get&lt;I&gt;(declval&lt;Tuple&gt;()))...&gt;</code>
-is <code class="sourceCode default">true</code>.</p></li>
-<li><p>If <code class="sourceCode default">tuple_size_v&lt;remove_reference_t&lt;Tuple&gt;&gt;</code>
-is 1, then
-<code class="sourceCode default">reference_constructs_from_tem</code>-
-<code class="sourceCode default">porary_v&lt;T, decltype(get&lt;0&gt;(declval&lt;Tuple&gt;()))&gt;</code>
-is <code class="sourceCode default">false</code>.</p></li>
+<li><code class="sourceCode default">is_constructible_v&lt;T, decltype(get&lt;I&gt;(declval&lt;Tuple&gt;()))...&gt;</code>
+is <code class="sourceCode default">true</code>.</li>
 </ul>
 
 </div>
