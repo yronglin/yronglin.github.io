@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="mpark/wg21" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="dcterms.date" content="2025-06-08" />
+  <meta name="dcterms.date" content="2025-06-10" />
   <title>Make `std::make_from_tuple` SFINAE friendly</title>
   <style>
       code{white-space: pre-wrap;}
@@ -425,14 +425,14 @@ SFINAE friendly</h1>
   <tr>
     <td>Document #:</td>
     <td>
-      D0000R1
-      [<a href="https://wg21.link/P0000">Latest</a>]
-      [<a href="https://wg21.link/P0000/status">Status</a>]
+      P3738R0
+      [<a href="https://wg21.link/P3738">Latest</a>]
+      [<a href="https://wg21.link/P3738/status">Status</a>]
     </td>
   </tr>
   <tr>
     <td>Date:</td>
-    <td>2025-06-08</td>
+    <td>2025-06-10</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Project:</td>
@@ -444,10 +444,6 @@ SFINAE friendly</h1>
       Library Evolution<br>
       Library<br>
     </td>
-  </tr>
-  <tr>
-    <td>Revises: </td>
-    <td>D0000R0</td>
   </tr>
   <tr>
     <td style="vertical-align:top">Reply-to:</td>
@@ -504,15 +500,9 @@ explicitly stated.</p>
 <h1 data-number="3" id="impact-on-the-standard"><span class="header-section-number">3</span> Impact on the Standard<a href="#impact-on-the-standard" class="self-link"></a></h1>
 <p>This proposal is a pure library improvement.</p>
 <h1 data-number="4" id="implementation-experience"><span class="header-section-number">4</span> Implementation Experience<a href="#implementation-experience" class="self-link"></a></h1>
-<p>I’ve implemented this improvement in:</p>
-<ul>
-<li><code class="sourceCode cpp">libc<span class="op">++</span></code>:
-<a href="https://github.com/llvm/llvm-project/pull/85263">[libc++]
-Implement LWG3528 (make_from_tuple can perform (the equivalent of) a
-C-style cast)</a>.</li>
-<li><code class="sourceCode cpp">microsoft<span class="op">/</span>STL</code>: <a href="https://github.com/microsoft/STL/pull/4528">&lt;tuple&gt;: Make
-std::make_from_tuple SFINAE friendly</a>.</li>
-</ul>
+<p>I’ve implemented this improvement in <a href="https://github.com/llvm/llvm-project/pull/85263"><code class="sourceCode cpp">libc<span class="op">++</span></code></a>,
+<a href="https://github.com/microsoft/STL/pull/4528"><code class="sourceCode cpp">microsoft<span class="op">/</span>STL</code></a>,
+<a href="https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=73edc003c0a8f0badc7027e6deefd3a573300b03"><code class="sourceCode cpp">libstdc<span class="op">++</span></code></a>.</p>
 <h1 data-number="5" id="proposed-wording"><span class="header-section-number">5</span> Proposed Wording<a href="#proposed-wording" class="self-link"></a></h1>
 <blockquote>
 <p>Modify section 22.4.6 [tuple.apply] as indicated:</p>
